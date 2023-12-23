@@ -3,6 +3,10 @@
     "version": "0.1.0",
     "description": "bgg games ranks parser",
     "main": "index.js",
+    "engines": {
+        "node": ">=18.0",
+        "npm": ">=8.0"
+    },
     "scripts": {
         "test": "jest --config jestconfig.json --coverage",
         "build": "rm -rf dist && tsc",
