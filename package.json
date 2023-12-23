@@ -26,6 +26,10 @@
     },
     "author": "Max Zinovik",
     "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/zinovik/bgg-games-ranks-parser.git"
+    },
     "bugs": {
         "url": "https://github.com/zinovik/bgg-games-ranks-parser/issues"
     },
