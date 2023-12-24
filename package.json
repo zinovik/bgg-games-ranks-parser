@@ -10,7 +10,7 @@
     "scripts": {
         "test": "jest --config jestconfig.json --coverage",
         "build": "rm -rf dist && tsc",
-        "dev": "tsc --watch & npx @google-cloud/functions-framework --target=main --source=dist --watch",
+        "dev": "npm run build && npx @google-cloud/functions-framework --target=main --source=dist",
         "deploy": "npm run build && cp package*.json dist && gcloud functions deploy bgg-games-ranks-parser --gen2 --trigger-http --runtime nodejs20 --entry-point=main --region=us-central1 --source=dist --update-build-env-vars=\"GOOGLE_NODE_RUN_SCRIPTS=\" --project zinovik-project",
         "service:account": "gcloud iam service-accounts keys create key-file.json --iam-account=zinovik-project@appspot.gserviceaccount.com",
         "describe": "gcloud functions describe bgg-games-ranks-parser --region=us-central1"
