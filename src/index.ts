@@ -12,11 +12,17 @@ functions.http('main', async (req, res) => {
 
     console.log(`Request | amount: '${amount}'`);
 
-    const games = await getGamesData(Number(amount) || DEFAULT_GAMES_AMOUNT);
+    const data = await getGamesData(Number(amount) || DEFAULT_GAMES_AMOUNT);
 
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    data.games.forEach((game) => {
+        const gameCopies = data.games.filter((g) => g.id === game.id);
+        if (gameCopies.length > 1) {
+            console.error(gameCopies, 'Game duplicates!');
+        }
+    });
 
     console.log('Done!');
 
-    res.status(200).json(games);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).json(data);
 });
