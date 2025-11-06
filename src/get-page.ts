@@ -1,4 +1,7 @@
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
+
+axiosRetry(axios, { retries: 3 });
 
 export const GAMES_PER_PAGE = 100;
 const URL = 'https://boardgamegeek.com/browse/boardgame/page/';
