@@ -1,3 +1,4 @@
+import chromium from '@sparticuz/chromium';
 import puppeteer from 'puppeteer';
 
 export const GAMES_PER_PAGE = 100;
@@ -5,12 +6,10 @@ const URL = 'https://boardgamegeek.com/browse/boardgame/page/';
 
 export const getPage = async (pageNumber: number): Promise<string> => {
     const browser = await puppeteer.launch({
-        headless: true,
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-        ],
+        args: chromium.args,
+        defaultViewport: (chromium as any).defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: (chromium as any).headless,
     });
     const page = await browser.newPage();
     await page.setUserAgent(
