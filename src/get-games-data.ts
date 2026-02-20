@@ -1,4 +1,4 @@
-import { getPage, GAMES_PER_PAGE } from './get-page';
+import { getPages, GAMES_PER_PAGE } from './get-pages';
 import { parsePage, Game } from './parse-page';
 
 interface BGGGamesRanksData {
@@ -11,12 +11,11 @@ export const getGamesData = async (
 ): Promise<BGGGamesRanksData> => {
     const pagesAmount: number = Math.ceil(amount / GAMES_PER_PAGE);
 
-    const gamesByPages: Game[][] = await Promise.all(
-        [...Array(pagesAmount).keys()].map(async (i) => {
-            const page = await getPage(i + 1);
-            return parsePage(page);
-        })
+    const pages = await getPages(
+        [...Array(pagesAmount).keys()].map((i) => i + 1)
     );
+
+    const gamesByPages: Game[][] = pages.map((page) => parsePage(page));
 
     const games: Game[] = gamesByPages.reduce(
         (acc, pageGames) => [...acc, ...pageGames],
