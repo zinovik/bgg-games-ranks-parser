@@ -4,7 +4,7 @@ import puppeteer, { type HTTPRequest } from 'puppeteer';
 export const GAMES_PER_PAGE = 100;
 const URL = 'https://boardgamegeek.com/browse/boardgame/page/';
 const SELECTOR = '#collectionitems';
-const MAX_ATTEMPTS = 5;
+const MAX_ATTEMPTS = 10;
 const RETRY_DELAY_MS = 1000;
 
 const wait = (ms: number): Promise<void> =>
