@@ -4,24 +4,39 @@ import { getGamesData } from './get-games-data';
 const DEFAULT_GAMES_AMOUNT = 100;
 
 functions.http('main', async (req, res) => {
-    console.log('Triggered!');
+    const now = new Date();
 
     const {
         query: { amount },
     } = req;
 
-    console.log(`Request | amount: '${amount}'`);
-
     const data = await getGamesData(Number(amount) || DEFAULT_GAMES_AMOUNT);
 
-    data.games.forEach((game) => {
-        const gameCopies = data.games.filter((g) => g.id === game.id);
-        if (gameCopies.length > 1) {
-            console.error(gameCopies, 'Game duplicates!');
-        }
-    });
+    const gamesMap = new Map();
 
-    console.log('Done!');
+    for (const game of data.games) {
+        if (!gamesMap.has(game.id)) {
+            gamesMap.set(game.id, []);
+        }
+
+        gamesMap.get(game.id).push(game);
+    }
+
+    const duplicates = Array.from(gamesMap.values()).filter(
+        (games) => games.length > 1
+    );
+
+    if (duplicates.length > 0) {
+        throw new Error(
+            `Found ${duplicates.length} duplicate games: ${JSON.stringify(
+                duplicates
+            )}`
+        );
+    }
+
+    console.log(
+        `request | amount: ${amount} | time: ${new Date().getTime() - now.getTime()}ms`
+    );
 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.status(200).json(data);

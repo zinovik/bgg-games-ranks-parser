@@ -1,5 +1,6 @@
 import chromium from '@sparticuz/chromium';
 import puppeteer, { type HTTPRequest } from 'puppeteer';
+import { Game, parsePage } from './parse-page';
 
 export const GAMES_PER_PAGE = 100;
 const URL = 'https://boardgamegeek.com/browse/boardgame/page/';
@@ -10,7 +11,9 @@ const RETRY_DELAY_MS = 1000;
 const wait = (ms: number): Promise<void> =>
     new Promise((resolve) => setTimeout(resolve, ms));
 
-export const getPages = async (pageNumbers: number[]): Promise<string[]> => {
+export const getGamesByPages = async (
+    pageNumbers: number[]
+): Promise<Game[][]> => {
     const browser = await puppeteer.launch({
         args: chromium.args,
         executablePath: await chromium.executablePath(),
@@ -46,7 +49,24 @@ export const getPages = async (pageNumbers: number[]): Promise<string[]> => {
                     });
                     await page.waitForSelector(SELECTOR, { timeout: 10000 });
 
-                    return await page.content();
+                    const pageContent = await page.content();
+
+                    const pageGames = parsePage(pageContent);
+
+                    if (
+                        pageGames.length !== 100 ||
+                        pageGames.some(
+                            (game) =>
+                                !game.rank ||
+                                !game.name ||
+                                !game.year ||
+                                !game.id
+                        )
+                    ) {
+                        throw new Error(`Invalid data on page ${pageNumber}`);
+                    }
+
+                    return pageGames;
                 } catch (error) {
                     const message =
                         error instanceof Error ? error.message : String(error);
@@ -55,6 +75,10 @@ export const getPages = async (pageNumbers: number[]): Promise<string[]> => {
                             `Failed to fetch page ${pageNumber} after ${MAX_ATTEMPTS} attempts: ${message}`
                         );
                     }
+
+                    console.warn(
+                        `Attempt ${attempt} failed for page ${pageNumber}: ${message}. Retrying in ${RETRY_DELAY_MS}ms...`
+                    );
 
                     await wait(RETRY_DELAY_MS);
                 } finally {
@@ -65,9 +89,9 @@ export const getPages = async (pageNumbers: number[]): Promise<string[]> => {
             throw new Error(`Unexpected failure fetching page ${pageNumber}`);
         });
 
-        const pages = await Promise.all(promises);
+        const gamesByPages = await Promise.all(promises);
 
-        return pages;
+        return gamesByPages;
     } finally {
         await browser.close().catch((): void => undefined);
     }
