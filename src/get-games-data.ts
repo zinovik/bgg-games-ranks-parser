@@ -1,5 +1,5 @@
 import { getGamesByPages, GAMES_PER_PAGE } from './get-games-by-pages';
-import { parsePage, Game } from './parse-page';
+import { Game } from './parse-page';
 
 interface BGGGamesRanksData {
     date: string;

@@ -1,9 +1,14 @@
 import * as functions from '@google-cloud/functions-framework';
-import { getGamesData } from './get-games-data';
+import { getGamesData } from './get-games-data-api';
+import { ConfigParameterNotDefinedError } from './ConfigParameterNotDefinedError';
 
 const DEFAULT_GAMES_AMOUNT = 100;
 
 functions.http('main', async (req, res) => {
+    if (process.env.BGG_TOKEN === undefined) {
+        throw new ConfigParameterNotDefinedError('BGG_TOKEN');
+    }
+
     const now = new Date();
 
     const {
