@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import path from 'node:path';
 import { parse } from 'csv-parse/sync';
 import { Game } from './parse-page';
 
@@ -23,12 +22,8 @@ interface BoardGameRank {
 }
 
 export const getGamesDataFromCsv = async (amount: number): Promise<Game[]> => {
-    console.log(process.cwd());
-
-    const csv = fs.readFileSync(
-        path.join('dist', 'boardgames_ranks.csv'),
-        'utf8'
-    );
+    // TODO: Fetch from GCS
+    const csv = fs.readFileSync('boardgames_ranks.csv', 'utf8');
 
     const records: BoardGameRank[] = parse(csv, {
         columns: true,
