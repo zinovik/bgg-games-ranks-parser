@@ -26,7 +26,7 @@ export const getGamesDataFromCsv = async (amount: number): Promise<Game[]> => {
     console.log(process.cwd());
 
     const csv = fs.readFileSync(
-        path.join('bgg', 'boardgames_ranks.csv'),
+        path.join('dist', 'boardgames_ranks.csv'),
         'utf8'
     );
 
