@@ -1,6 +1,8 @@
-import fs from 'node:fs';
 import { parse } from 'csv-parse/sync';
 import { Game } from './parse-page';
+
+const BOARDGAMES_RANKS_CSV_URL =
+    'https://storage.googleapis.com/boardgamegeek-bg-ranks-data-dump/boardgames_ranks.csv';
 
 interface BoardGameRank {
     id: number;
@@ -22,8 +24,15 @@ interface BoardGameRank {
 }
 
 export const getGamesDataFromCsv = async (amount: number): Promise<Game[]> => {
-    // TODO: Fetch from GCS
-    const csv = fs.readFileSync('boardgames_ranks.csv', 'utf8');
+    const response = await fetch(BOARDGAMES_RANKS_CSV_URL);
+
+    if (!response.ok) {
+        throw new Error(
+            `Failed to fetch boardgames rank data: ${response.status}`
+        );
+    }
+
+    const csv = await response.text();
 
     const records: BoardGameRank[] = parse(csv, {
         columns: true,

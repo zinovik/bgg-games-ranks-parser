@@ -112,7 +112,7 @@ export const getGamesData = async (
 
     if (csv) {
         return {
-            games: localGames,
+            games: localGames.filter((game) => game.rank <= amount),
             date: new Date().toISOString(),
         };
     }
