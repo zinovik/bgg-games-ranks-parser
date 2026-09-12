@@ -12,10 +12,13 @@ functions.http('main', async (req, res) => {
     const now = new Date();
 
     const {
-        query: { amount },
+        query: { amount, csv },
     } = req;
 
-    const data = await getGamesData(Number(amount) || DEFAULT_GAMES_AMOUNT);
+    const data = await getGamesData(
+        Number(amount) || DEFAULT_GAMES_AMOUNT,
+        csv === 'true'
+    );
 
     const gamesMap = new Map();
 

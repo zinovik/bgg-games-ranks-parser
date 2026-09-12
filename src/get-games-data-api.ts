@@ -104,10 +104,18 @@ const chunk = <T>(items: T[], size: number): T[][] => {
 };
 
 export const getGamesData = async (
-    amount: number
+    amount: number,
+    csv?: boolean
 ): Promise<BGGGamesRanksData> => {
     const extraAmount = Math.min(Math.max(amount, 50), 500);
     const localGames = await getGamesDataFromCsv(amount + extraAmount);
+
+    if (csv) {
+        return {
+            games: localGames,
+            date: new Date().toISOString(),
+        };
+    }
 
     // BGG caps /thing requests at 20 ids, so large `amount` values have to be batched
     const idChunks = chunk(
